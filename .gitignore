@@ -4,9 +4,18 @@ __pycache__/
 
 # Database
 *.db
+*.sqlite
+*.sqlite3
 
 # Environment
 .env
 
 # OS
 .DS_Store
+
+# Python virtual environment
+venv/
+env/
+
+# IDE
+.vscode/
