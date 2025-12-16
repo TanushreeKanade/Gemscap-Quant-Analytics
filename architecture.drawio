@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.7">
+  <diagram id="GemsCap-Architecture" name="Architecture">
+    <mxGraphModel dx="1042" dy="574" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="binance" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Binance WebSocket API&#xa;(@trade stream)" vertex="1">
+          <mxGeometry height="80" width="260" x="60" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ingestion" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Ingestion Layer&#xa;(binance_ws.py)" vertex="1">
+          <mxGeometry height="80" width="260" x="380" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="storage" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Storage Layer&#xa;SQLite (market_data.db)" vertex="1">
+          <mxGeometry height="80" width="300" x="720" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="analytics" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Analytics Layer&#xa;• Resampling&#xa;• Pair Alignment&#xa;• OLS Hedge Ratio&#xa;• Spread &amp; Z-Score&#xa;• Rolling Correlation&#xa;• ADF Test" vertex="1">
+          <mxGeometry height="160" width="520" x="240" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="streamlit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Streamlit Dashboard &amp; Orchestration&#xa;(app.py)" vertex="1">
+          <mxGeometry height="90" width="520" x="240" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" value="User / Evaluator&#xa;(Web Browser)" vertex="1">
+          <mxGeometry height="70" width="200" x="400" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="binance" style="endArrow=block;html=1;" target="ingestion" value="Live trade events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="ingestion" style="endArrow=block;html=1;" target="storage" value="Insert ticks">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="storage" style="endArrow=block;html=1;" target="analytics" value="Fetch time-series data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="analytics" style="endArrow=block;html=1;" target="streamlit" value="Computed metrics">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="streamlit" style="endArrow=block;html=1;" target="user" value="Visualization &amp; interaction">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
