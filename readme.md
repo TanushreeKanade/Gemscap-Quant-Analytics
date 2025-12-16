@@ -1,55 +1,58 @@
-# Real-Time Pair Trading Analytics
-
+# Real-Time Pair Trading Analytics Platform  
 **GemsCap – Quant Developer Evaluation (Round 1)**
 
 ---
 
 ## Overview
 
-This project implements a **real-time quantitative analytics system for pair trading** using live Binance WebSocket market data. The application demonstrates an **end-to-end workflow** covering real-time data ingestion, persistent storage, time-series processing, statistical analytics, interactive visualization, and alerting, as required by the assignment.
+This project implements a **real-time quantitative analytics platform for statistical pair trading** using live market data streamed from the Binance WebSocket API.
 
-The system is designed to emphasize **clean separation of concerns**, **statistical correctness**, and **realistic market behavior**, rather than synthetic or hardcoded outputs.
+The application demonstrates a **complete end-to-end workflow** — from real-time data ingestion and persistent storage to time-series processing, statistical analytics, interactive visualization, alerting, and lightweight strategy validation.
+
+The system is intentionally designed to emphasize **quantitative reasoning, architectural clarity, and trader-oriented interpretation**, rather than synthetic signals or hardcoded outputs.
 
 ---
 
-## Key Features
+## Key Capabilities
 
-### Live Data Ingestion
-
-* Real-time tick-level trade data streamed from the Binance WebSocket API for two symbols (BTCUSDT and ETHUSDT).
-* Ingestion runs continuously and feeds downstream analytics without blocking the UI.
+### Real-Time Data Ingestion
+- Live tick-level trade data streamed via Binance WebSocket
+- Continuous ingestion for BTCUSDT and ETHUSDT
+- Non-blocking ingestion to ensure smooth UI updates
 
 ### Persistent Storage
-
-* All incoming tick data is persisted in a local SQLite database to ensure durability, reproducibility, and offline analysis.
+- All tick data is stored in a local SQLite database
+- Enables reproducibility, resampling, and offline analysis
+- Database is auto-created on first run
 
 ### Time-Series Processing
-
-* Tick data is resampled into configurable timeframes:
-
-  * 1 second
-  * 1 minute
-  * 5 minutes
+- Tick data is resampled into configurable timeframes:
+  - 1 second
+  - 1 minute
+  - 5 minutes
 
 ### Pair Trading Analytics
+- OLS-based hedge ratio (β) estimation
+- Spread construction using hedge ratio
+- Rolling Z-score of the spread
+- Rolling correlation between paired assets
+- Augmented Dickey-Fuller (ADF) test for stationarity
+- Mean-reversion half-life estimation
+- Lightweight rule-based mean-reversion backtest
 
-* OLS-based hedge ratio (β) estimation
-* Spread computation between paired assets
-* Z-score of the spread using rolling statistics
-* Rolling correlation
-* Augmented Dickey-Fuller (ADF) test for stationarity
-
-### Interactive Dashboard (Streamlit)
-
-* Near real-time analytics updates
-* Adjustable rolling window size
-* User-defined Z-score alert thresholds
-* CSV export of processed analytics
-* Interactive charts supporting zoom, pan, and hover
+### Interactive Dashboard
+- Near real-time analytics updates
+- Adjustable rolling window size
+- User-defined Z-score alert thresholds
+- Z-score regime visualization with threshold highlighting
+- Trader interpretation layer translating analytics into actionable insights
+- CSV export of processed analytics
+- Interactive charts with zoom, pan, and hover
 
 ---
 
 ## Architecture Overview
+
 
 ```
 Binance WebSocket
@@ -72,50 +75,92 @@ Streamlit Dashboard & Orchestration Layer (app.py)
 Alerts & Data Export
 ```
 
-The architecture is intentionally **modular and loosely coupled**, allowing:
 
-* Easy integration of additional data sources (REST APIs, historical CSV uploads)
-* Extension with new analytics modules without impacting existing components
-* Future scaling to higher-frequency data or alternative markets without frontend changes
+The architecture is modular and loosely coupled, enabling:
+- Easy integration of alternate data sources
+- Addition of new analytics without refactoring
+- Independent scaling of analytics and UI layers
+
+Architecture diagrams are provided in:
+- architecture.drawio
+- architecture.png
+
+---
+
+## Analytics Explained
+
+### Hedge Ratio (β)
+Estimated using Ordinary Least Squares (OLS) regression and adapts dynamically to market conditions.
+
+### Spread & Z-Score
+The spread is constructed using the estimated hedge ratio, and the Z-score measures deviation from the rolling equilibrium.
+
+### Stationarity (ADF Test)
+The Augmented Dickey-Fuller test validates mean-reverting behavior before signal interpretation.
+
+### Rolling Correlation
+Measures relationship stability between paired assets and acts as a risk filter.
+
+### Mean-Reversion Half-Life
+Estimates the expected time for the spread to revert toward its mean, helping assess signal timing.
+
+### Mini Mean-Reversion Backtest
+A lightweight rule-based simulation:
+- Entry: |Z| > threshold
+- Exit: |Z| < 0.5  
+Used for intuition and validation, not performance claims.
+
+---
+
+## Trader Interpretation Layer
+
+The dashboard includes a trader-oriented interpretation panel that combines:
+- Z-score magnitude
+- Stationarity confirmation
+- Correlation stability
+- Mean-reversion half-life
+
+This layer bridges raw statistical outputs and practical trading intuition.
+
+---
+
+## Alerts
+
+Context-aware alerts are triggered when Z-score thresholds are breached.  
+Each alert includes supporting metrics to reduce false positives and provide situational awareness.
 
 ---
 
 ## Technology Stack
 
-* **Language:** Python 3.x
-* **Data Ingestion:** Binance WebSocket API
-* **Database:** SQLite
-* **Analytics:** pandas, numpy, statsmodels
-* **Visualization / UI:** Streamlit
+- Language: Python 3.x
+- Data Ingestion: Binance WebSocket API
+- Database: SQLite
+- Analytics: pandas, numpy, statsmodels
+- Visualization / UI: Streamlit, Plotly
 
 ---
 
 ## Project Structure
 
-```
 Gems_cap/
 │
-├── app.py                  # Streamlit UI & orchestration
-│
+├── app.py
 ├── ingestion/
-│   ├── __init__.py
-│   └── binance_ws.py       # WebSocket ingestion logic
-│
+│ └── binance_ws.py
 ├── storage/
-│   ├── __init__.py
-│   └── db.py               # SQLite schema & queries
-│
+│ └── db.py
 ├── analytics/
-│   ├── __init__.py
-│   ├── resampling.py       # Tick → bar conversion
-│   ├── regression.py       # Pair alignment & OLS hedge ratio
-│   ├── spread.py           # Spread & Z-score
-│   ├── correlation.py      # Rolling correlation
-│   └── stationarity.py     # ADF test
-│
-└── market_data.db          # SQLite database (auto-created)
-```
-
+│ ├── resampling.py
+│ ├── regression.py
+│ ├── spread.py
+│ ├── correlation.py
+│ ├── stationarity.py
+│ ├── halflife.py
+│ └── backtest.py
+├── architecture.drawio
+├── architecture.png
+└── market_data.db
 ---
 
 ## How to Run
